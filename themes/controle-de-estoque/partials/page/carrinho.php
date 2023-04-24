@@ -79,7 +79,6 @@
                                 <div class="col-3"><p class="table-title">Código de barras</p></div>
                                 <div class="col-5"><p class="table-title">Nome</p></div>
                                 <div class="col-3"><p class="table-title">Preço</p></div>
-                                <input type="hidden" value="">
                             </div>
                         </div>
                         <div class="column-content table-list"></div>

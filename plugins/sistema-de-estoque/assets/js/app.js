@@ -26,15 +26,18 @@ jQuery(document).ready(function($) {
     }
   });
 
-  $(".modal .close, .modal-overlay").click(function() {
-    $(".modal").removeClass("show").attr("hidden", true);
-    $("body").removeClass("modal-overlay");
+  $(document).keydown(function(event) {
+    if (event.key === "Escape" && $(".modal").is(":visible")) {
+      $(".modal").removeClass("show").attr("hidden", true);
+      $("body").removeClass("modal-overlay");
+    }
   });
 
   $(document).keydown(function(event) {
     if (event.key === "Escape" && $(".modal").is(":visible")) {
       $(".modal").removeClass("show").attr("hidden", true);
       $("body").removeClass("modal-overlay");
+      $(".modal").attr("type", '');
     }
   });
 
@@ -55,17 +58,21 @@ jQuery(document).ready(function($) {
     }
     $(document).keypress(function(event) {
         if (event.keyCode === 13 && $(".modal").hasClass("show")) {
-
             confirmPayment();
+            $(".modal").attr("type", '');
+            barcode = ''
         }
     });
     $(document).on('click' , '#confirm' , function(event) {
         confirmPayment();
+        $(".modal").attr("type", '');
+        barcode = ''
     });
 
   let products = [];
   let total = 0
   let barcode = ''
+  let activeBarcode = false
 
   $('#confirm').on('click', function() {
     if($('.modal').attr('type') === 'manualBarcode'){
@@ -75,22 +82,22 @@ jQuery(document).ready(function($) {
     }
   });
 
-  $('#confirm').on('click', function() {
-    if($('.modal').attr('type') === 'manualBarcode'){
-      barcode = $('#manualBarcode').val();
-      addProduct(barcode);
-      $(".modal").removeClass("show").attr("hidden", true);
+  $(document).keydown(function(e){
+    if(e.ctrlKey){
+      console.log('clicou')
+      activeBarcode = !activeBarcode ? true : false
     }
-  });
+  })
 
   $(document).keydown(function(e) {
-    if (e.which >= 48 && e.which <= 57) {
+    console.log(activeBarcode)
+    if (e.which >= 48 && e.which <= 57 && activeBarcode && $('.modal').attr('type') == '') {
+        e.preventDefault()
         barcode += String.fromCharCode(e.which);
         if (barcode.length === 13) {
-          if (barcode.length === 13) {
-              addProduct(barcode)
-              barcode = '';
-          }
+          console.log(barcode)
+            addProduct(barcode)
+            barcode = '';
         }
     }
 });
@@ -161,7 +168,7 @@ jQuery(document).ready(function($) {
           '<div class="col-1"><p class="table-content quantity">1</p></div>' +
           '<div class="col-3"><p class="table-content">' + response.data.products[productIndex].barcode + '</p></div>' +
           '<div class="col-5"><p class="table-content">' + response.data.products[productIndex].title + '</p></div>' +
-          '<div class="col-3"><p class="table-content total-price">' + formatPrice(totalPrice) + '</p></div>' +
+          '<div class="col-3"><div class="row"><div class="col-9"><p class="table-content total-price">' + formatPrice(totalPrice) + '</p></div><div class="col-3 trash"><img src="/wp-content/themes/controle-de-estoque/assets/images/trash.png"></div></div></div>' +
           '</div>';
           $('.column-content.table-list').append(row);
         }
@@ -182,11 +189,59 @@ jQuery(document).ready(function($) {
     return formattedValue;
   }
 
+  // Remover produto
+
+  $(document).on('click', '.trash img', function() {
+    // obter o código de barras do produto
+    var barcode = $(this).closest('.product-infos').data('barcode');
+    
+    // encontrar o índice do produto no array de produtos
+    var index = -1;
+    for (var i = 0; i < products.length; i++) {
+      if (products[i].barcode === barcode) {
+        index = i;
+        break;
+      }
+    }
+  
+    // remover o produto do array
+      products.splice(index, 1);
+
+      let newList = products
+    
+    // atualizar a exibição da tabela e do preço total
+    updateTableAndTotalPrice(newList);
+  });
+
+  function updateTableAndTotalPrice(newList) {
+    // limpar a tabela
+    $('.product-list').empty();
+    
+    // iterar sobre os produtos e adicioná-los à tabela
+    for (var i = 0; i < newList.length; i++) {
+      var product = newList[i];
+      
+      var row = '<div class="row product-infos" data-barcode="' + product.barcode + '">' +
+                  '<div class="col-1"><p class="table-content quantity">' + product.quantity + '</p></div>' +
+                  '<div class="col-3"><p class="table-content">' + product.barcode + '</p></div>' +
+                  '<div class="col-5"><p class="table-content">' + product.title + '</p></div>' +
+                  '<div class="col-3"><div class="row"><div class="col-9"><p class="table-content total-price">R$&nbsp;' + product.total_price.toFixed(2) + '</p></div><div class="col-3 trash"><img src="/wp-content/themes/controle-de-estoque/assets/images/trash.png"></div></div></div>' +
+                '</div>';
+      
+      $('.product-list').append(row);
+    }
+
+    console.log(newList)
+    console.log(total)
+    // atualizar o preço total
+    $('.total-price-card').text(formatPrice(total));
+  }
+
   // finalizar compra
 
   function createOrder(){
     if (products.length === 0) {
-      alert('Nenhum produto mo carrinho');
+      alert('Nenhum produto no carrinho');
       return;
     }
 
@@ -204,6 +259,8 @@ jQuery(document).ready(function($) {
       },
       success: function(response) {
         products = []
+        total = 0
+        barcode = ''
         $('.column-content.table-list').text('')
         $('.unity-price').text('R$ 0,00')
         $('.barcode-label').html('<br>')
@@ -212,6 +269,8 @@ jQuery(document).ready(function($) {
         $('.change-value').text('R$ 0,00')
         $('#payment').val('')
         alert('Venda efetuada')
+        $('.modal').attr('type' , 'initial')
+        console.log(response)
       },
       error: function(xhr, status, error) {
         alert('Erro ao efetuar a venda');

@@ -149,3 +149,6 @@ button#confirm {
     border-radius: 6px;
     cursor: pointer;
 }
+.trash img{
+    width: 15px;
+}
