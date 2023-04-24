@@ -1,0 +1,151 @@
+body{
+    margin: 0;
+    max-height: 100vh;
+    overflow: hidden;
+}
+header{
+    background: #000080;
+    padding: 20px;
+}
+header h2{
+    color: #fff;
+    text-transform: uppercase;
+}
+.content-infos{
+    height: 100vh;
+    background: #836FFF;
+    padding-top: 30px;
+}
+.header-content{
+    background: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+.header-content h2{
+    font-size: 24px;
+    text-transform: uppercase;
+}
+.column-card{
+    border-radius: 8px;
+    background: #ffffff;
+    margin-bottom: 20px;
+}
+.column-list{
+    height: 100%;    
+}
+.header-column{
+    background: #000080;
+    border-radius: 8px 8px 0 0;
+    padding: 5px;
+}
+.header-column h3{
+    color: #ffffff;
+    margin: 0;
+}
+.column-content{
+    text-align: right;
+    padding: 20px;
+}
+.column-content p{
+    margin: 0;
+    font-weight: bold;
+}
+.keyboard-info{
+    color: #fff;
+    margin: 0 !important;
+} 
+.modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease-in-out;
+    transform: translate(-50%, -200%) scale(0.8);
+    width: 50%;
+    height: 50%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+.modal.show {
+    transform: translate(-50%, -50%) scale(1);
+}
+.table-title{
+    color: #fff;
+    margin: 0;
+}
+.product-infos:nth-child(even) {
+    background-color: #ffffff;
+}
+
+.product-infos:nth-child(odd) {
+    background-color: #f1f1f1;
+}
+.product-infos {
+    padding: 10px 20px;
+}
+.table-list{
+    text-align: left;
+    padding: 0;
+    overflow: hidden;
+    overflow-y: scroll;
+    height: 262px;
+}
+.modal input {
+    display: none;
+    height: 40px;
+    border-radius: 6px;
+    border: 1px solid #dbd5d5;
+    padding: 5px;
+    width: 200px;
+    color: #000;
+    margin-bottom: 20px;
+}
+.modal #checkout{
+    display: none;
+}
+.modal[type="payment"] #payment , .modal[type="manualBarcode"] #manualBarcode , .modal[type="checkout"] #checkout{
+    display: block;
+}
+.modal label{
+    color: #000;
+    font-weight: 500;
+    font-size: 32px;
+}
+button#confirm {
+    background: #000080;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.checkout-btns{
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+#createOrder{
+    background: #000080;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+#back{
+    background: #836FFF;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+}
