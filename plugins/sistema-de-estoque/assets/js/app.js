@@ -69,7 +69,8 @@ jQuery(document).ready(function($) {
         barcode = ''
     });
 
-  let products = [];
+  window.products = []
+  let products = window.products
   let total = 0
   let barcode = ''
   let activeBarcode = false
@@ -84,18 +85,16 @@ jQuery(document).ready(function($) {
 
   $(document).keydown(function(e){
     if(e.ctrlKey){
-      console.log('clicou')
       activeBarcode = !activeBarcode ? true : false
     }
+    console.log()
   })
 
   $(document).keydown(function(e) {
-    console.log(activeBarcode)
     if (e.which >= 48 && e.which <= 57 && activeBarcode && $('.modal').attr('type') == '') {
         e.preventDefault()
         barcode += String.fromCharCode(e.which);
         if (barcode.length === 13) {
-          console.log(barcode)
             addProduct(barcode)
             barcode = '';
         }
@@ -155,24 +154,7 @@ jQuery(document).ready(function($) {
         var productIndex = response.data.products.findIndex(function(product) {
           return product.barcode === barcode;
         });
-
-        if (productInfos.length > 0) {
-          var quantity = parseInt(productInfos.find('.table-content.quantity').text()) + 1;
-          var unityPrice = parseFloat(response.data.products[productIndex].unity_price)
-          var totalPrice = unityPrice * quantity;
-          productInfos.find('.table-content.quantity').text(quantity);
-          productInfos.find('.total-price').text(formatPrice(totalPrice));
-        } else {
-          var totalPrice = response.data.products[productIndex].total_price
-          var row = '<div class="row product-infos" data-barcode="' + response.data.products[productIndex].barcode + '">' +
-          '<div class="col-1"><p class="table-content quantity">1</p></div>' +
-          '<div class="col-3"><p class="table-content">' + response.data.products[productIndex].barcode + '</p></div>' +
-          '<div class="col-5"><p class="table-content">' + response.data.products[productIndex].title + '</p></div>' +
-          '<div class="col-3"><div class="row"><div class="col-9"><p class="table-content total-price">' + formatPrice(totalPrice) + '</p></div><div class="col-3 trash"><img src="/wp-content/themes/controle-de-estoque/assets/images/trash.png"></div></div></div>' +
-          '</div>';
-          $('.column-content.table-list').append(row);
-        }
-      $('.total-price-card').text(formatPrice(total));
+      updateTableAndTotalPrice(products)
       $('.barcode-label').text(response.data.products[productIndex].barcode)
       $('.unity-price').text(formatPrice(response.data.products[productIndex].unity_price))
       $('#manualBarcode').val('');
@@ -191,51 +173,45 @@ jQuery(document).ready(function($) {
 
   // Remover produto
 
-  $(document).on('click', '.trash img', function() {
-    // obter o código de barras do produto
-    var barcode = $(this).closest('.product-infos').data('barcode');
-    
-    // encontrar o índice do produto no array de produtos
+ $(document).on('click', '.trash img', function() {
+    var dataBarcode = $(this).closest('.product-infos').data('barcode');
     var index = -1;
+    console.log('barcode fora:' + dataBarcode)
     for (var i = 0; i < products.length; i++) {
-      if (products[i].barcode === barcode) {
-        index = i;
-        break;
-      }
+        console.log('productBarcode:' + products[i].barcode)
+        if (products[i].barcode == dataBarcode) {
+            index = i;
+            products.splice(index, 1);
+            break;
+        }
     }
+    updateTableAndTotalPrice(products);
+});
+
+function updateTableAndTotalPrice(products) {
+  var newProducts = [];
+  var total = 0;
+  $('.column-content.table-list').empty();
+  if(products.length != 0){
+      for (var i = 0; i < products.length; i++) {
+          var product = products[i];
+          var row = '<div class="row product-infos" data-barcode="' + product.barcode + '">' +
+                      '<div class="col-1"><p class="table-content quantity">' + product.quantity + '</p></div>' +
+                      '<div class="col-3"><p class="table-content">' + product.barcode + '</p></div>' +
+                      '<div class="col-5"><p class="table-content">' + product.title + '</p></div>' +
+                      '<div class="col-3"><div class="row"><div class="col-9"><p class="table-content total-price">R$&nbsp;' + product.total_price.toFixed(2) + '</p></div><div class="col-3 trash"><img src="/wp-content/themes/controle-de-estoque/assets/images/trash.png"></div></div></div>' +
+                  '</div>';
   
-    // remover o produto do array
-      products.splice(index, 1);
-
-      let newList = products
-    
-    // atualizar a exibição da tabela e do preço total
-    updateTableAndTotalPrice(newList);
-  });
-
-  function updateTableAndTotalPrice(newList) {
-    // limpar a tabela
-    $('.product-list').empty();
-    
-    // iterar sobre os produtos e adicioná-los à tabela
-    for (var i = 0; i < newList.length; i++) {
-      var product = newList[i];
-      
-      var row = '<div class="row product-infos" data-barcode="' + product.barcode + '">' +
-                  '<div class="col-1"><p class="table-content quantity">' + product.quantity + '</p></div>' +
-                  '<div class="col-3"><p class="table-content">' + product.barcode + '</p></div>' +
-                  '<div class="col-5"><p class="table-content">' + product.title + '</p></div>' +
-                  '<div class="col-3"><div class="row"><div class="col-9"><p class="table-content total-price">R$&nbsp;' + product.total_price.toFixed(2) + '</p></div><div class="col-3 trash"><img src="/wp-content/themes/controle-de-estoque/assets/images/trash.png"></div></div></div>' +
-                '</div>';
-      
-      $('.product-list').append(row);
-    }
-
-    console.log(newList)
-    console.log(total)
-    // atualizar o preço total
-    $('.total-price-card').text(formatPrice(total));
+          $('.column-content.table-list').append(row);
+          newProducts.push(product)
+          total += product.total_price;
+      }
+  }else{
+      $('.column-content.table-list').text('');
   }
+  products = newProducts;
+  $('.total-price-card').text(formatPrice(total));
+}
 
   // finalizar compra
 
@@ -244,9 +220,6 @@ jQuery(document).ready(function($) {
       alert('Nenhum produto no carrinho');
       return;
     }
-
-    console.log(products)
-    console.log(total)
 
     $.ajax({
       url: wpurl.ajax,
@@ -270,7 +243,6 @@ jQuery(document).ready(function($) {
         $('#payment').val('')
         alert('Venda efetuada')
         $('.modal').attr('type' , 'initial')
-        console.log(response)
       },
       error: function(xhr, status, error) {
         alert('Erro ao efetuar a venda');

@@ -12,6 +12,8 @@ License: GPL2
 require_once(plugin_dir_path(__FILE__) . 'inc/add-to-cart.php');
 require_once(plugin_dir_path(__FILE__) . 'inc/create-order.php');
 require_once(plugin_dir_path(__FILE__) . 'inc/generate-list.php');
+require_once(plugin_dir_path(__FILE__) . 'inc/import-product.php');
+require_once(plugin_dir_path(__FILE__) . 'inc/report.php');
 require_once( plugin_dir_path( __FILE__ ) . '/vendor/autoload.php' );
 
 function estoque_scripts() {

@@ -151,4 +151,5 @@ button#confirm {
 }
 .trash img{
     width: 15px;
+    cursor: pointer;
 }
