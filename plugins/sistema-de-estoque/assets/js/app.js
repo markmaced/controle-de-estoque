@@ -149,8 +149,6 @@ jQuery(document).ready(function($) {
           alert(response.message);
           return;
         }
-        // barcode = $('#manualBarcode').val();
-        var productInfos = $('.product-infos[data-barcode="' + barcode + '"]');
         var productIndex = response.data.products.findIndex(function(product) {
           return product.barcode === barcode;
         });
@@ -173,20 +171,42 @@ jQuery(document).ready(function($) {
 
   // Remover produto
 
- $(document).on('click', '.trash img', function() {
+  $(document).on('click', '.trash img', function() {
     var dataBarcode = $(this).closest('.product-infos').data('barcode');
-    var index = -1;
     console.log('barcode fora:' + dataBarcode)
-    for (var i = 0; i < products.length; i++) {
-        console.log('productBarcode:' + products[i].barcode)
-        if (products[i].barcode == dataBarcode) {
-            index = i;
-            products.splice(index, 1);
-            break;
-        }
+    $.ajax({
+      url: wpurl.ajax,
+      type: 'POST',
+      dataType: 'json',
+      data: {
+      action: 'delete_product',
+      barcode: dataBarcode
+    },
+    success: function(response) {
+      products = response.data.products
+      total = response.data.total_price
+      updateTableAndTotalPrice(products);
+    },
+    error: function(xhr, status, error) {
+      alert('Erro ao excluir o produto.');
     }
-    updateTableAndTotalPrice(products);
-});
+    });
+  });
+
+//  $(document).on('click', '.trash img', function() {
+//     var dataBarcode = $(this).closest('.product-infos').data('barcode');
+//     var index = -1;
+//     console.log('barcode fora:' + dataBarcode)
+//     for (var i = 0; i < products.length; i++) {
+//         console.log('productBarcode:' + products[i].barcode)
+//         if (products[i].barcode == dataBarcode) {
+//             index = i;
+//             products.splice(index, 1);
+//             break;
+//         }
+//     }
+//     updateTableAndTotalPrice(products);
+// });
 
 function updateTableAndTotalPrice(products) {
   var newProducts = [];
