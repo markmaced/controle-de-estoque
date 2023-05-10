@@ -1,7 +1,7 @@
 <?php
-add_action('wp_ajax_daily_report', 'daily_report');
-add_action('wp_ajax_nopriv_daily_report', 'daily_report');
-function daily_report(){
+add_action('wp_ajax_month_report', 'month_report');
+add_action('wp_ajax_nopriv_month_report', 'month_report');
+function month_report(){
     $data_inicio = $_POST['init_date'];
     $data_fim = $_POST['final_date'];
     $args = array(
@@ -55,7 +55,8 @@ function daily_report(){
     }
 
     wp_send_json_success(array(
-        'date' => $data_inicio,
+        'init_date' => $data_inicio,
+        'final_date' => $data_fim,
         'valor_da_venda' => $total_value,
         'produto_mais_vendido' => $produto_mais_vendido,
         'quantidade_mais_vendida' => $quantidade_mais_vendida,

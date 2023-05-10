@@ -16,6 +16,8 @@ require_once(plugin_dir_path(__FILE__) . 'inc/import-product.php');
 require_once(plugin_dir_path(__FILE__) . 'inc/report.php');
 require_once(plugin_dir_path(__FILE__) . 'inc/delete-product.php');
 require_once(plugin_dir_path(__FILE__) . 'inc/daily-report.php');
+require_once(plugin_dir_path(__FILE__) . 'inc/week-report.php');
+require_once(plugin_dir_path(__FILE__) . 'inc/month-report.php');
 require_once( plugin_dir_path( __FILE__ ) . '/vendor/autoload.php' );
 
 function estoque_scripts() {

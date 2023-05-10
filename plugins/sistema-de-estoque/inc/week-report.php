@@ -1,7 +1,7 @@
 <?php
-add_action('wp_ajax_daily_report', 'daily_report');
-add_action('wp_ajax_nopriv_daily_report', 'daily_report');
-function daily_report(){
+add_action('wp_ajax_week_report', 'week_report');
+add_action('wp_ajax_nopriv_week_report', 'week_report');
+function week_report(){
     $data_inicio = $_POST['init_date'];
     $data_fim = $_POST['final_date'];
     $args = array(
@@ -25,9 +25,6 @@ function daily_report(){
     $query = new WP_Query( $args );
     
     $total_value = 0;
-    $quantidades_produtos = array();
-    $produto_mais_vendido = null;
-    $quantidade_mais_vendida = 0;
     
     if ( $query->have_posts() ) {
         while ( $query->have_posts() ) {
@@ -35,6 +32,9 @@ function daily_report(){
             $valor_da_venda = get_field( 'valor_da_venda', get_the_ID() );
             $total_value += (float) $valor_da_venda;
             $produtos = get_field('produtos_da_venda' , get_the_ID());
+            $quantidades_produtos = array();
+            $produto_mais_vendido = null;
+            $quantidade_mais_vendida = 0;
 
             foreach($produtos as $produto){
                 $quantidade = $produto['quantity'];
@@ -55,7 +55,8 @@ function daily_report(){
     }
 
     wp_send_json_success(array(
-        'date' => $data_inicio,
+        'init_date' => $data_inicio,
+        'final_date' => $data_fim,
         'valor_da_venda' => $total_value,
         'produto_mais_vendido' => $produto_mais_vendido,
         'quantidade_mais_vendida' => $quantidade_mais_vendida,
