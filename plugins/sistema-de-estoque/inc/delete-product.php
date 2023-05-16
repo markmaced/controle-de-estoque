@@ -13,6 +13,8 @@ function delete_product() {
                     break;
                 }
             }
+            $_SESSION['cart'] = array_values($_SESSION['cart']);
+            
             $_SESSION['total_price'] = calculate_total_price();
             wp_send_json_success(array(
                 'products' => $_SESSION['cart'],
@@ -26,5 +28,4 @@ function delete_product() {
         }
     }
 }
-
 ?>

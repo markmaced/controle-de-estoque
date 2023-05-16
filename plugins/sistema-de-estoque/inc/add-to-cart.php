@@ -38,6 +38,7 @@ function add_product() {
                 $price = floatval(str_replace(',', '.', get_field('preco')));
                 $title = get_the_title();
                 $barcode = get_field('codigo_de_barras');
+                $price_per_kg = get_field('preco_por_kg');
 
                 $product_found = false;
                 $product_key = '';
@@ -66,6 +67,7 @@ function add_product() {
                         'quantity' => 1,
                         'unity_price' => $price,
                         'total_price' => $price,
+                        'price_per_kg' => $price_per_kg
                     );
                     $_SESSION['cart'][] = $product;
                     $_SESSION['total_price'] = calculate_total_price();
@@ -82,6 +84,7 @@ function add_product() {
                     'quantity' => $product['quantity'],
                     'unity_price' => $price,
                     'total_price' => $product['total_price'],
+                    'price_per_kg' => $product['price_per_kg']
                 );
             }
 

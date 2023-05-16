@@ -86,12 +86,14 @@ jQuery(document).ready(function($) {
   $(document).keydown(function(e){
     if(e.ctrlKey){
       activeBarcode = !activeBarcode ? true : false
+
+      activeBarcode === true ? $('.barcode-indicator').css({'background' : 'green' , 'width' : '20px' , 'height' : '20px' , 'border-radius' : '50px'}) : $('.barcode-indicator').css({'background' : 'red' , 'width' : '20px' , 'height' : '20px' , 'border-radius' : '50px'})
     }
-    console.log()
   })
 
   $(document).keydown(function(e) {
     if (e.which >= 48 && e.which <= 57 && activeBarcode && $('.modal').attr('type') == '') {
+      console.log('oi barcode 2.0')
         e.preventDefault()
         barcode += String.fromCharCode(e.which);
         if (barcode.length === 13) {
@@ -125,43 +127,89 @@ jQuery(document).ready(function($) {
     }
   });
 
-  
+  // adicionar produto
   
   function addProduct(barcode) {
+    console.log('oi')
     if (barcode === '') {
-      alert('Digite um código de barras válido.');
-      return;
+        alert('Digite um código de barras válido.');
+        return;
     }
-  
+
     $.ajax({
-      url: wpurl.ajax,
-      type: 'POST',
-      dataType: 'json',
-      data: {
-        action: 'add_product',
-        barcode: barcode
-      },
-      success: function(response) {
-        products = response.data.products
-        total = response.data.total_price
-        console.log(JSON.stringify(response, null, 2));
-        if (response.success === false) {
-          alert(response.message);
-          return;
+        url: wpurl.ajax,
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            action: 'add_product',
+            barcode: barcode
+        },
+        success: function(response) {
+            products = response.data.products
+            total = response.data.total_price
+            console.log(response.data.products)
+            if (response.success === false) {
+                alert(response.message);
+                return;
+            }
+            var productIndex = response.data.products.findIndex(function(product) {
+                return product.barcode === barcode;
+            });
+
+            var pricePerKg = response.data.products[productIndex].price_per_kg;
+            if (pricePerKg === 'Sim') {
+                openModalAndCalculatePrice(response.data.products[productIndex] , productIndex);
+            } else {
+                updateTableAndTotalPrice(products);
+                $('.barcode-label').text(response.data.products[productIndex].barcode);
+                $('.unity-price').text(formatPrice(response.data.products[productIndex].unity_price));
+                $('#manualBarcode').val('');
+            }
+        },
+        error: function(xhr, status, error) {
+            alert('Erro ao adicionar o produto.');
         }
-        var productIndex = response.data.products.findIndex(function(product) {
-          return product.barcode === barcode;
-        });
-      updateTableAndTotalPrice(products)
-      $('.barcode-label').text(response.data.products[productIndex].barcode)
-      $('.unity-price').text(formatPrice(response.data.products[productIndex].unity_price))
-      $('#manualBarcode').val('');
-      },
-      error: function(xhr, status, error) {
-        alert('Erro ao adicionar o produto.');
-      }
     });
+}
+
+function openModalAndCalculatePrice(product, productIndex) {
+  $(".modal").attr("hidden", false).addClass("show");
+  $('.modal').attr("type", "kg")
+  $('label').text('Digite o peso em gramas')
+  if ($('.modal').attr('type') == 'kg') {
+      $('#confirm').on('click', function (e) {
+          e.preventDefault();
+          let weight = $('#pricePerKg').val() / 1000;
+          let priceWeight = weight * product.unity_price;
+
+          $.ajax({
+              url: wpurl.ajax,
+              type: 'POST',
+              dataType: 'json',
+              data: {
+                  action: 'price_per_weight',
+                  productIndex: productIndex,
+                  total_price: priceWeight
+              },
+              success: function (response) {
+                $(".modal").attr("hidden", true).removeClass("show");
+                $('.modal').attr("type", "")
+                  products = response.data.products;
+                  total = response.data.total_price;
+                  console.log(response.data.products);
+
+                  updateTableAndTotalPrice(products);
+                  $('.barcode-label').text(response.data.products[productIndex].barcode);
+                  $('.unity-price').text(formatPrice(response.data.products[productIndex].unity_price));
+                  $('#manualBarcode').val('');
+              },
+              error: function (xhr, status, error) {
+                  alert('Erro ao adicionar o produto.');
+              }
+          });
+      });
   }
+}
 
   // Formatar preço
   function formatPrice(value) {
@@ -173,7 +221,6 @@ jQuery(document).ready(function($) {
 
   $(document).on('click', '.trash img', function() {
     var dataBarcode = $(this).closest('.product-infos').data('barcode');
-    console.log('barcode fora:' + dataBarcode)
     $.ajax({
       url: wpurl.ajax,
       type: 'POST',
@@ -193,23 +240,8 @@ jQuery(document).ready(function($) {
     });
   });
 
-//  $(document).on('click', '.trash img', function() {
-//     var dataBarcode = $(this).closest('.product-infos').data('barcode');
-//     var index = -1;
-//     console.log('barcode fora:' + dataBarcode)
-//     for (var i = 0; i < products.length; i++) {
-//         console.log('productBarcode:' + products[i].barcode)
-//         if (products[i].barcode == dataBarcode) {
-//             index = i;
-//             products.splice(index, 1);
-//             break;
-//         }
-//     }
-//     updateTableAndTotalPrice(products);
-// });
-
 function updateTableAndTotalPrice(products) {
-  var newProducts = [];
+  console.log('cheguei aqui')
   var total = 0;
   $('.column-content.table-list').empty();
   if(products.length != 0){
@@ -223,13 +255,12 @@ function updateTableAndTotalPrice(products) {
                   '</div>';
   
           $('.column-content.table-list').append(row);
-          newProducts.push(product)
           total += product.total_price;
       }
   }else{
       $('.column-content.table-list').text('');
   }
-  products = newProducts;
+  // products = newProducts;
   $('.total-price-card').text(formatPrice(total));
 }
 
@@ -262,7 +293,7 @@ function updateTableAndTotalPrice(products) {
         $('.change-value').text('R$ 0,00')
         $('#payment').val('')
         alert('Venda efetuada')
-        $('.modal').attr('type' , 'initial')
+        $('.modal').attr('type' , '')
       },
       error: function(xhr, status, error) {
         alert('Erro ao efetuar a venda');

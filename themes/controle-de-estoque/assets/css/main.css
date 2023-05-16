@@ -112,7 +112,7 @@ header h2{
 .modal #checkout{
     display: none;
 }
-.modal[type="payment"] #payment , .modal[type="manualBarcode"] #manualBarcode , .modal[type="checkout"] #checkout{
+.modal[type="payment"] #payment , .modal[type="manualBarcode"] #manualBarcode , .modal[type="checkout"] #checkout , .modal[type="kg"] #pricePerKg{
     display: block;
 }
 .modal label{
@@ -152,4 +152,11 @@ button#confirm {
 .trash img{
     width: 15px;
     cursor: pointer;
+}
+.barcode-indicator{
+    background : red; 
+    width : 20px; 
+    height : 20px; 
+    border-radius : 50px;
+    border: 1px solid;
 }

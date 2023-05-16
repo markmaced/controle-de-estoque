@@ -8,6 +8,9 @@
                 <p class="keyboard-info">ALT + 1 - Receber pagamento</p>
                 <p class="keyboard-info"> / </p>
                 <p class="keyboard-info">ALT + 2 - Digitar código</p>
+                <p class="keyboard-info"> / </p>
+                <p class="keyboard-info">ALT + 3 - Finalizar venda</p>
+                <p class="keyboard-info barcode-indicator"></p>
             </div>
         </div>
     </div>
@@ -91,6 +94,7 @@
         <label></label>
         <input id="payment" type="text" placeholder="Digite o valor recebido"></input>
         <input id="manualBarcode" type="text" placeholder="Digite o código de barras do produto"></input>
+        <input id="pricePerKg" type="text" placeholder="Digite o peso em gramas"/>
         <button id="confirm" type="button">Confirmar</button>
         <div id="checkout" type="checkout">
             <div class="checkout-title">
