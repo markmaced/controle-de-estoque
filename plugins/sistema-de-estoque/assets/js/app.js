@@ -93,7 +93,6 @@ jQuery(document).ready(function($) {
 
   $(document).keydown(function(e) {
     if (e.which >= 48 && e.which <= 57 && activeBarcode && $('.modal').attr('type') == '') {
-      console.log('oi barcode 2.0')
         e.preventDefault()
         barcode += String.fromCharCode(e.which);
         if (barcode.length === 13) {
@@ -130,7 +129,6 @@ jQuery(document).ready(function($) {
   // adicionar produto
   
   function addProduct(barcode) {
-    console.log('oi')
     if (barcode === '') {
         alert('Digite um código de barras válido.');
         return;
@@ -147,7 +145,6 @@ jQuery(document).ready(function($) {
         success: function(response) {
             products = response.data.products
             total = response.data.total_price
-            console.log(response.data.products)
             if (response.success === false) {
                 alert(response.message);
                 return;
@@ -196,8 +193,6 @@ function openModalAndCalculatePrice(product, productIndex) {
                 $('.modal').attr("type", "")
                   products = response.data.products;
                   total = response.data.total_price;
-                  console.log(response.data.products);
-
                   updateTableAndTotalPrice(products);
                   $('.barcode-label').text(response.data.products[productIndex].barcode);
                   $('.unity-price').text(formatPrice(response.data.products[productIndex].unity_price));
@@ -241,7 +236,6 @@ function openModalAndCalculatePrice(product, productIndex) {
   });
 
 function updateTableAndTotalPrice(products) {
-  console.log('cheguei aqui')
   var total = 0;
   $('.column-content.table-list').empty();
   if(products.length != 0){
