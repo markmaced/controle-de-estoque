@@ -12,6 +12,8 @@ License: GPL2
 require_once(plugin_dir_path(__FILE__) . 'inc/add-to-cart.php');
 require_once(plugin_dir_path(__FILE__) . 'inc/create-order.php');
 require_once(plugin_dir_path(__FILE__) . 'inc/generate-list.php');
+require_once(plugin_dir_path(__FILE__) . 'inc/generate-list-ajax.php');
+require_once(plugin_dir_path(__FILE__) . 'inc/list-control.php');
 require_once(plugin_dir_path(__FILE__) . 'inc/import-product.php');
 require_once(plugin_dir_path(__FILE__) . 'inc/report.php');
 require_once(plugin_dir_path(__FILE__) . 'inc/delete-product.php');
@@ -35,6 +37,7 @@ add_action( 'wp_enqueue_scripts', 'estoque_scripts' );
 
 function my_custom_admin_script() {
     wp_enqueue_script( 'admin-js', plugin_dir_url( __FILE__ ) . '/assets/js/admin.js', array( 'jquery' ), '1.0.0', true );
+    wp_enqueue_style( 'admin-estoque-style' , plugin_dir_url( __FILE__ ) . '/assets/css/admin.css' );
     wp_localize_script( 'admin-js', 'wpurl',
     array( 
         'ajax' => admin_url( 'admin-ajax.php' ),

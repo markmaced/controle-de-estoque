@@ -1,0 +1,14 @@
+.admin-btn{
+    margin-top: 20px;
+    border: none;
+    padding: 10px 20px;
+    background: #1d2327;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.5s;
+}
+.admin-btn:hover{
+    background: #f68b11;
+    transition: 0.5s;
+}

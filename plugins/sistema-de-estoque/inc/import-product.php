@@ -14,13 +14,14 @@ add_action( 'admin_menu', 'add_product_submenu' );
 function import_products_page() {
 	?>
 	<div class="wrap">
-		<h1>Importar produtos</h1>
+		<h2>Importar produtos</h2>
 		<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
             <input type="hidden" name="action" value="import_products">
             <label for="csv_file">Arquivo CSV:</label>
             <input type="file" name="csv_file" id="csv_file">
             <?php wp_nonce_field( 'import_products_nonce', 'import_products_nonce' ); ?>
-            <input type="submit" name="submit" value="Importar">
+			<br>
+            <input type="submit" class="admin-btn" name="submit" value="Importar">
         </form>
 	</div>
 	<?php

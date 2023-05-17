@@ -295,24 +295,4 @@ function updateTableAndTotalPrice(products) {
     });
     
   }
-
-  // Lista ceasa
-  $('#download').on('click' , function(e){
-    e.preventDefault()
-    $.ajax({
-      url: wpurl.ajax,
-      type: 'POST',
-      dataType: 'json',
-      data: {
-        action: 'generate_list_page',
-      },
-      success: function(response) {
-        console.log(response)
-      },
-      error: function(xhr, status, error) {
-        console.log(error)
-        alert('Erro ao Baixar o arquivo');
-      }
-    });
-  })
 });

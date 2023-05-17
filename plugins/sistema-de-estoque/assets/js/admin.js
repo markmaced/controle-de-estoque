@@ -96,4 +96,24 @@ $(document).on('change' , '#date' , function(e){
       }
     });
   })
+  // Lista ceasa
+  $('#download').on('click', function(e) {
+    e.preventDefault();
+    $.ajax({
+      url: wpurl.ajax,
+      type: 'POST',
+      dataType: 'json',
+      data: {
+        action: 'generate_list_ceasa',
+      },
+      success: function(response) {
+        // Redirecionar para a URL do PDF para iniciar o download
+        window.location.href = response.pdfUrl;
+      },
+      error: function(xhr, status, error) {
+        console.log(error);
+        alert('Erro ao baixar o arquivo');
+      }
+    });
+  });
 })

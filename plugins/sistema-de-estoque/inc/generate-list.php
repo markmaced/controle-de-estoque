@@ -1,7 +1,5 @@
 <?php
 
-use Fpdf\Fpdf;
-
 function add_submenu_generate_list() {
     add_submenu_page(
         'edit.php?post_type=produtos',
@@ -14,24 +12,10 @@ function add_submenu_generate_list() {
 }
 add_action('admin_menu', 'add_submenu_generate_list');
 
-function generate_list_page() {
-    require( plugin_dir_path( __FILE__ ) . '../vendor/fpdf/fpdf/src/Fpdf/Fpdf.php' );
-    
-    ob_clean();
-
-    $pdf = new Fpdf();
-
-    $pdf->SetTitle('Lista do Ceasa');
-    $pdf->AddPage();
-
-    $pdf->SetFont('Arial', '', 12);
-
-    $pdf->Cell(40, 10, 'Nome do produto', 1);
-    $pdf->Cell(40, 10, 'Estoque', 1);
-    $pdf->Ln();
-
+function generate_list_page(){
     $args = array(
         'post_type' => 'produtos',
+        'posts_per_page' => -1,
         'meta_query' => array(
             array(
                 'key' => 'estoque',
@@ -39,27 +23,38 @@ function generate_list_page() {
                 'compare' => '<',
                 'type' => 'NUMERIC'
             )
-        ),
-        'posts_per_page' => -1
+        )
     );
     $products_query = new WP_Query($args);
 
-    if($products_query->have_posts()) {
-        while ($products_query->have_posts()) {
-            $products_query->the_post();
-            $product_name = get_the_title();
-            $product_stock = get_field('estoque');
-            $pdf->Cell(40, 10, $product_name, 1);
-            $pdf->Cell(40, 10, $product_stock, 1);
-            $pdf->Ln();
-        }
-    }else{
-    }
+    echo '<h2>Gerar lista do ceasa</h2>';
 
-    wp_reset_postdata();
+    if($products_query->have_posts()) {?>
+        <table class="wp-list-table widefat striped">       
+            <thead>
+                <tr>
+                    <th>Nome do Produto</th>
+                    <th>Código de Barras</th>
+                    <th>Estoque</th>
+                </tr>
+            </thead>
+        <?php while ($products_query->have_posts()) {
+                $products_query->the_post();?>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #c3c4c7;">
+                        <td><?php echo the_title()?></td>
+                        <td><?php echo get_field('codigo_de_barras' , get_the_ID())?></td>
+                        <td><?php echo get_field('estoque' , get_the_ID())?></td>
+                    </tr>
+                </tbody>
+            <?php } ?>
+        </table>
+    <?php }
 
-    $filename = 'lista-ceasa-'.date('d-m-Y').'.pdf';
-    $pdf->Output('D', $filename , true);
-    exit;
+    ?>
+    <div class="wrap">
+		<button type="button" class="admin-btn" id="download">Baixar lista</button>
+	</div>
+    <?php
 }
 ?>
