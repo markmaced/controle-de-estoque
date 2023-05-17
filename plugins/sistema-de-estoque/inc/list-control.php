@@ -29,8 +29,8 @@ function generated_lists_page() {
                 <tr>
                     <td><?php echo $pdf_file; ?></td>
                     <td>
-                        <a href="<?php echo plugin_dir_url(__FILE__) . '../assets/documents/' . $pdf_file; ?>" target="_blank">Visualizar</a>
-                        <a href="<?php echo admin_url('admin-post.php?action=delete_pdf&file=' . $pdf_file); ?>">Excluir</a>
+                        <a href="<?php echo plugin_dir_url(__FILE__) . '../assets/documents/' . $pdf_file; ?>" target="_blank" class="admin-btn">Visualizar</a>
+                        <a href="<?php echo admin_url('admin-post.php?action=delete_pdf&file=' . $pdf_file); ?>" class="admin-btn">Excluir</a>
                     </td>
                 </tr>
             <?php } ?>
