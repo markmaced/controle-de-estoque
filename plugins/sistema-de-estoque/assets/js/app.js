@@ -86,19 +86,25 @@ jQuery(document).ready(function($) {
   $(document).keydown(function(e){
     if(e.ctrlKey){
       activeBarcode = !activeBarcode ? true : false
+      console.log(activeBarcode)
 
       activeBarcode === true ? $('.barcode-indicator').css({'background' : 'green' , 'width' : '20px' , 'height' : '20px' , 'border-radius' : '50px'}) : $('.barcode-indicator').css({'background' : 'red' , 'width' : '20px' , 'height' : '20px' , 'border-radius' : '50px'})
     }
   })
 
-  $(document).keydown(function(e) {
+  var timer;
+$(document).keydown(function(e) {
     if (e.which >= 48 && e.which <= 57 && activeBarcode && $('.modal').attr('type') == '') {
-        e.preventDefault()
+        e.preventDefault();
         barcode += String.fromCharCode(e.which);
-        if (barcode.length === 13) {
-            addProduct(barcode)
-            barcode = '';
-        }
+
+        clearTimeout(timer);
+        timer = setTimeout(function() {
+            if (barcode) {
+                addProduct(barcode);
+                barcode = '';
+            }
+        }, 500);
     }
 });
   
@@ -129,6 +135,7 @@ jQuery(document).ready(function($) {
   // adicionar produto
   
   function addProduct(barcode) {
+    console.log(barcode)
     if (barcode === '') {
         alert('Digite um código de barras válido.');
         return;

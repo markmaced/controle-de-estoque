@@ -37,6 +37,11 @@ function process_import() {
 				$stock = $data[2];
                 $code = $data[3];
 				$price_per_kg = $data[4];
+
+				if (strpos($price, 'R$') !== false) {
+					$price = str_replace('R$', '', $price);
+				}
+				
 				$args = array(
 					'post_type' => 'produtos',
 					'post_title' => $product_name,

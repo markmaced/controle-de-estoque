@@ -58,11 +58,12 @@ function create_order(){
         
         if ($product_id) {
             $stock = get_field('estoque', $product_id);
-            if ($stock >= $quantity) {
+            if ($stock >= $quantity && $stock != 0) {
                 $new_stock = $stock - $quantity;
                 update_field('estoque', $new_stock, $product_id);
                 reset_cart_session();
-            } else {
+            } else if($stock == 0){
+                update_field('estoque', $stock, $product_id);
             }
         } else {
             
